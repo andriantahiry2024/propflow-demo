@@ -75,9 +75,9 @@
         <div class="kv"><span>Loyer mensuel</span><b id="c-rent">—</b></div>
         <div class="kv"><span>Charges + taxe / an</span><b id="c-cost">—</b></div>
         <div class="kv"><span>Rendement net</span><b id="c-net">—</b></div>
-        <label style="display:block;margin:14px 0 6px;font-size:12px;color:#6b6b66">Charges annuelles (%)</label>
+        <label style="display:block;margin:14px 0 6px;font-size:12px;color:#6b6b66">Charges annuelles (% du loyer)</label>
         <input type="range" id="charges" min="10" max="35" value="22">
-        <p class="note">Rendement net = (loyer × 12 − charges) / prix. Charges par défaut : 22 % (gestion, taxe, assurance, entretien).</p>
+        <p class="note">Rendement net = (loyer × 12 − charges) / prix. Charges par défaut : 22 % du loyer brut (gestion, taxe, assurance, entretien).</p>
       </div>
 
       <div class="report">
@@ -113,8 +113,8 @@ const eur = n => n.toLocaleString('fr-FR') + ' €';
 const pct = (l, p) => (l*12/p*100);
 
 function net(b){
-  const charges = b.prix * (document.getElementById('charges').value/100);
-  return (b.loyer*12 - Math.max(charges, b.charges)) / b.prix * 100;
+  const charges = b.loyer*12 * (document.getElementById('charges').value/100);
+  return (b.loyer*12 - charges) / b.prix * 100;
 }
 
 function render(){
@@ -141,8 +141,8 @@ function calc(){
   const b = biens[selected];
   document.getElementById('c-price').textContent = eur(b.prix);
   document.getElementById('c-rent').textContent = eur(b.loyer);
-  const charges = b.prix * (document.getElementById('charges').value/100);
-  document.getElementById('c-cost').textContent = eur(Math.max(charges, b.charges));
+  const charges = b.loyer*12 * (document.getElementById('charges').value/100);
+  document.getElementById('c-cost').textContent = eur(charges);
   document.getElementById('c-net').textContent = net(b).toFixed(1) + ' %';
 }
 
