@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kit LinkedIn — 5 demandes · Konekteo</title>
+<style>
+  :root{--ink:#0a0a0a;--lime:#e9ff3b;--bg:#f7f7f4;--line:#e6e6e3;--muted:#6b6b66}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  header{padding:18px 24px;border-bottom:1px solid var(--line);background:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  h1{font-size:20px;margin:0;letter-spacing:-.02em}
+  .hint{font-size:13px;color:var(--muted)}
+  main{max-width:860px;margin:0 auto;padding:24px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+  .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .name{font-weight:800;font-size:16px}
+  .agency{color:var(--muted);font-size:13px}
+  .msg{margin:12px 0;padding:12px;background:#fafaf7;border:1px solid var(--line);border-radius:10px;font-size:14px;line-height:1.5}
+  .count{font-size:11px;color:var(--muted)}
+  button{background:var(--ink);color:#fff;border:0;border-radius:999px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer}
+  button.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  a{color:var(--ink)}
+  .after{background:var(--ink);color:#fff;border-radius:16px;padding:18px;margin-top:22px}
+  .after h2{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--lime);margin:0 0 10px}
+  .after .msg{background:#151515;border-color:#2a2a2a;color:#eee}
+  .after button{background:var(--lime);color:#111}
+</style>
+</head>
+<body>
+<header>
+  <h1>Kit LinkedIn — 5 demandes</h1>
+  <div class="hint">Copie → colle dans « Ajouter une note » → envoyer</div>
+</header>
+<main>
+  <div id="list"></div>
+
+  <div class="after">
+    <h2>Quand la personne accepte — message de suivi</h2>
+    <div class="msg" id="follow">Merci pour la connexion, [Prénom].
+
+Concrètement : je construis le petit outil qui manque. Par exemple, un système qui relance automatiquement vos leads et prépare le compte-rendu de visite à partir de vos notes. Vous gardez vos outils actuels, je me branche par-dessus.
+
+Comment ça se passe : 15 minutes d'audit, devis sous 24 h, premier livrable en 7 jours. Sans engagement de durée.
+
+Vous avez un créneau mardi ou jeudi ?
+
+Nomena — konekteo.com</div>
+    <button onclick="copier('follow', this)">Copier le message de suivi</button>
+  </div>
+</main>
+<script>
+const profils = [
+  {p:"Simon", n:"Lefort", a:"Catanéo Immobilier", u:"https://www.linkedin.com/in/simon-lefort-6006ab14a"},
+  {p:"Maxime", n:"Chabert", a:"PRIMMO Immobilier", u:"https://www.linkedin.com/in/maxime-chabert-7ab4aa226"},
+  {p:"Valentin", n:"Brenière", a:"NOVEA Immobilier", u:"https://www.linkedin.com/in/valentin-brenière-319b4767"},
+  {p:"Johan", n:"Carron", a:"Régie Carron", u:"https://fr.linkedin.com/in/johan-carron-70821081"},
+  {p:"Enzo", n:"Molina", a:"My Casa Immobilier", u:"https://www.linkedin.com/in/enzo-molina-477862146"}
+];
+const tpl = p => `Bonjour ${p}, je construis des outils sur mesure pour les agences immobilières : relance automatique des leads, comptes-rendus de visite pré-remplis, suivi des mandats. Livré en 7 jours, devis sous 24 h. Vous avez 15 minutes cette semaine ?`;
+
+const list = document.getElementById('list');
+profils.forEach((x,i) => {
+  const txt = tpl(x.p);
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `
+    <div class="top">
+      <div><span class="name">${x.p} ${x.n}</span> <span class="agency">— ${x.a}</span></div>
+      <div class="count">${txt.length} caractères</div>
+    </div>
+    <div class="msg" id="m${i}">${txt.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div>
+    <button data-i="${i}">Copier le message</button>
+    <a href="${x.u}" target="_blank" rel="noopener"><button class="ghost">Ouvrir le profil</button></a>`;
+  list.appendChild(div);
+});
+
+function copier(id, btn){
+  const t = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(t).then(()=>{
+    const old = btn.textContent; btn.textContent = 'Copié ✔';
+    setTimeout(()=>btn.textContent = old, 1500);
+  }).catch(()=>{ alert('Copie impossible — sélectionne le texte à la main.'); });
+}
+
+document.querySelectorAll('button[data-i]').forEach(b=>{
+  b.onclick = () => copier('m'+b.dataset.i, b);
+});
+</script>
+</body>
+</html>
