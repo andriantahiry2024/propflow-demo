@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PropFlow — veille d'annonces immobilières · Konekteo</title>
+<style>
+  :root{--ink:#0a0a0a;--lime:#e9ff3b;--bg:#f7f7f4;--line:#e6e6e3;--muted:#6b6b66}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--line);background:#fff}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em}
+  .dot{width:26px;height:26px;border-radius:8px;background:var(--ink);display:grid;place-items:center;color:var(--lime);font-size:13px;font-weight:800}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--lime);padding:4px 8px;border-radius:6px}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px}
+  h1{font-size:30px;letter-spacing:-.03em;margin:0 0 6px}
+  .sub{color:var(--muted);margin:0 0 22px}
+  .grid{display:grid;grid-template-columns:1fr 380px;gap:18px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:10px 8px;border-bottom:1px solid var(--line)}
+  td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr.sel td{background:#fcfce8}
+  .price{font-weight:700}
+  .yield{font-weight:700;color:#1a7f37}
+  .yield.low{color:#b45309}
+  .badge{font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px;background:#f1f1ec;color:#444}
+  .badge.new{background:var(--lime);color:#111}
+  .btn{display:inline-block;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
+  .kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .kv b{font-variant-numeric:tabular-nums}
+  .note{font-size:12px;color:var(--muted);margin-top:10px}
+  .report{background:var(--ink);color:#fff;border-radius:16px;padding:18px;margin-top:18px}
+  .report h3{margin:0 0 10px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--lime)}
+  .report li{font-size:14px;margin:8px 0;color:#e8e8e8}
+  .dm{margin-top:26px;padding:14px 16px;border:1px dashed var(--line);border-radius:12px;font-size:12px;color:var(--muted);background:#fff}
+  input[type=range]{width:100%}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot">P</span> PropFlow <span class="tag">démo</span></div>
+  <div style="font-size:13px;color:#6b6b66">Veille d'annonces · calcul de rentabilité · Konekteo</div>
+</header>
+
+<div class="wrap">
+  <h1>Les opportunités du jour, déjà calculées.</h1>
+  <p class="sub">Données d'exemple — démonstration de l'interface et du calcul de rentabilité.</p>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <div class="filters">
+          <button class="chip on" data-f="all">Tout</button>
+          <button class="chip" data-f="appart">Appartements</button>
+          <button class="chip" data-f="immeuble">Immeubles</button>
+          <button class="chip" data-f="new">Nouvelles annonces</button>
+          <button class="chip" data-f="yield">Rendement &gt; 6 %</button>
+        </div>
+        <table>
+          <thead><tr><th>Bien</th><th>Prix</th><th>Loyer estimé</th><th>Rendement brut</th><th>Vu</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h3 style="margin:0 0 10px;font-size:15px">Calculateur</h3>
+        <div class="kv"><span>Prix d'achat</span><b id="c-price">—</b></div>
+        <div class="kv"><span>Loyer mensuel</span><b id="c-rent">—</b></div>
+        <div class="kv"><span>Charges + taxe / an</span><b id="c-cost">—</b></div>
+        <div class="kv"><span>Rendement net</span><b id="c-net">—</b></div>
+        <label style="display:block;margin:14px 0 6px;font-size:12px;color:#6b6b66">Charges annuelles (%)</label>
+        <input type="range" id="charges" min="10" max="35" value="22">
+        <p class="note">Rendement net = (loyer × 12 − charges) / prix. Charges par défaut : 22 % (gestion, taxe, assurance, entretien).</p>
+      </div>
+
+      <div class="report">
+        <h3>Rapport du matin · 08:00</h3>
+        <ul>
+          <li>3 nouvelles annonces correspondant à vos critères</li>
+          <li>1 baisse de prix détectée (−18 000 €)</li>
+          <li>2 annonces retirées (vendues ou pourvues)</li>
+          <li>Meilleur rendement brut du jour : <b style="color:#e9ff3b">7,4 %</b></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <div class="dm">
+    Démonstration PropFlow — les annonces, prix et loyers sont fictifs. Interface et calcul de rentabilité développés par Konekteo ·
+    <a href="https://konekteo.com" style="color:#0a0a0a">konekteo.com</a>
+  </div>
+</div>
+
+<script>
+const biens = [
+  {t:"appart", nom:"T3 — Lyon 3e, Part-Dieu", prix:289000, loyer:1450, vu:"aujourd'hui", isNew:true, charges:1400},
+  {t:"appart", nom:"T2 — Lyon 7e, Guillotière", prix:215000, loyer:980, vu:"aujourd'hui", isNew:true, charges:1100},
+  {t:"immeuble", nom:"Immeuble 4 lots — Villeurbanne", prix:640000, loyer:3450, vu:"hier", isNew:false, charges:4200},
+  {t:"appart", nom:"T4 — Lyon 6e, Brotteaux", prix:465000, loyer:1890, vu:"hier", isNew:false, charges:2400},
+  {t:"immeuble", nom:"Immeuble 6 lots — Oullins", prix:820000, loyer:4300, vu:"il y a 2 j", isNew:false, charges:5100},
+  {t:"appart", nom:"Studio — Lyon 1er, Terreaux", prix:132000, loyer:640, vu:"aujourd'hui", isNew:true, charges:800}
+];
+const rows = document.getElementById('rows');
+let selected = 0, filter = 'all';
+const eur = n => n.toLocaleString('fr-FR') + ' €';
+const pct = (l, p) => (l*12/p*100);
+
+function net(b){
+  const charges = b.prix * (document.getElementById('charges').value/100);
+  return (b.loyer*12 - Math.max(charges, b.charges)) / b.prix * 100;
+}
+
+function render(){
+  rows.innerHTML = '';
+  biens.forEach((b,i)=>{
+    const rend = pct(b.loyer, b.prix);
+    if(filter==='appart' && b.t!=='appart') return;
+    if(filter==='immeuble' && b.t!=='immeuble') return;
+    if(filter==='new' && !b.isNew) return;
+    if(filter==='yield' && rend < 6) return;
+    const tr = document.createElement('tr');
+    tr.className = i===selected ? 'sel' : '';
+    tr.innerHTML = `<td>${b.nom} ${b.isNew?'<span class="badge new">nouveau</span>':''}</td>
+      <td class="price">${eur(b.prix)}</td>
+      <td>${eur(b.loyer)}/mois</td>
+      <td class="yield ${rend<6?'low':''}">${rend.toFixed(1)} %</td>
+      <td><span class="badge">${b.vu}</span></td>`;
+    tr.onclick = ()=>{ selected=i; render(); calc(); };
+    rows.appendChild(tr);
+  });
+}
+
+function calc(){
+  const b = biens[selected];
+  document.getElementById('c-price').textContent = eur(b.prix);
+  document.getElementById('c-rent').textContent = eur(b.loyer);
+  const charges = b.prix * (document.getElementById('charges').value/100);
+  document.getElementById('c-cost').textContent = eur(Math.max(charges, b.charges));
+  document.getElementById('c-net').textContent = net(b).toFixed(1) + ' %';
+}
+
+document.querySelectorAll('.chip').forEach(c=>{
+  c.onclick = ()=>{
+    document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on'); filter = c.dataset.f; render();
+  };
+});
+document.getElementById('charges').oninput = ()=>{ render(); calc(); };
+render(); calc();
+</script>
+</body>
+</html>
